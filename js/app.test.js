@@ -8,7 +8,9 @@ const {
     verificarNomeDuplicado,
     embaralharArray,
     criarParesSorteio,
-    adicionar
+    adicionar,
+    sortear,
+    reiniciar
 } = require('./app.js');
 
 describe('Sistema de Amigo Secreto', () => {
@@ -90,6 +92,63 @@ describe('Sistema de Amigo Secreto', () => {
             expect(document.getElementById('lista-amigos').textContent).toBe('');
             expect(mockAlert).toHaveBeenCalled();
             mockAlert.mockRestore();
+        });
+    });
+
+    describe('limparCampo', () => {
+        test('deve limpar o valor do campo', () => {
+            document.getElementById('nome-amigo').value = 'Teste';
+            limparCampo('nome-amigo');
+            expect(document.getElementById('nome-amigo').value).toBe('');
+        });
+
+        test('deve lançar erro para ID inexistente', () => {
+            expect(() => limparCampo('campo-inexistente')).toThrow();
+        });
+    });
+
+    describe('sortear', () => {
+        test('deve alertar quando houver menos de 3 participantes', () => {
+            const mockAlert = jest.spyOn(window, 'alert').mockImplementation(() => {});
+            document.getElementById('lista-amigos').textContent = 'João, Maria';
+            sortear();
+            expect(mockAlert).toHaveBeenCalledWith('Adicione pelo menos 3 pessoas para o sorteio!');
+            mockAlert.mockRestore();
+        });
+
+        test('deve criar sorteio válido com 3 ou mais participantes', () => {
+            document.getElementById('lista-amigos').textContent = 'João, Maria, Pedro';
+            sortear();
+            const resultado = document.getElementById('lista-sorteio').innerHTML;
+            
+            // Verifica a estrutura do sorteio
+            expect(resultado).toContain('-&gt;'); // Verifica a seta codificada em HTML
+            expect(resultado.split('<br>').length).toBe(3);
+            
+            // Verifica se todos os nomes estão presentes
+            ['João', 'Maria', 'Pedro'].forEach(nome => {
+                expect(resultado).toContain(nome);
+            });
+        });
+    });
+
+    describe('reiniciar', () => {
+        test('deve limpar todas as listas', () => {
+            document.getElementById('lista-amigos').textContent = 'João, Maria';
+            document.getElementById('lista-sorteio').innerHTML = 'Sorteio anterior';
+            
+            reiniciar();
+            
+            expect(document.getElementById('lista-amigos').textContent).toBe('');
+            expect(document.getElementById('lista-sorteio').textContent).toBe('');
+        });
+    });
+
+    describe('verificações de erro', () => {
+        test('criarParesSorteio deve lançar erro com listas de tamanhos diferentes', () => {
+            expect(() => {
+                criarParesSorteio(['A', 'B'], ['C']);
+            }).toThrow('As listas precisam ter o mesmo tamanho');
         });
     });
 });

@@ -1,14 +1,18 @@
 /**
  * @fileoverview Sistema de sorteio de amigo secreto
- * @version 1.0.0
+ * @version 1.0.1
  * @author Cleverson
  * @description Sistema para gerenciar sorteio de amigo secreto com validações e interface amigável
+ * @jest-environment jsdom
  */
 
 /**
  * Limpa o valor de um campo do formulário
  * @param {string} id - ID do elemento HTML a ser limpo
- * @throws {Error} Se o elemento não for encontrado
+ * @throws {Error} Se o elemento com o ID especificado não for encontrado no DOM
+ * @example
+ * // Limpa o campo com ID 'nome-amigo'
+ * limparCampo('nome-amigo');
  */
 function limparCampo(id) {
     document.getElementById(id).value = '';
@@ -57,7 +61,7 @@ function embaralharArray(array) {
 }
 
 /**
- * Cria pares para o amigo secreto garantindo que ninguém tire a si mesmo
+ * Cria pares para o amigo secreto
  * @param {string[]} nomes - Lista de nomes original
  * @param {string[]} embaralhados - Lista de nomes embaralhada
  * @returns {string[]} Array com os pares de amigo secreto no formato "A -> B"
@@ -65,6 +69,7 @@ function embaralharArray(array) {
  * @example
  * // Retorna: ['A -> B', 'B -> C', 'C -> A']
  * criarParesSorteio(['A', 'B', 'C'], ['C', 'A', 'B']);
+ * @tested true
  */
 function criarParesSorteio(nomes, embaralhados) {
     // Verifica se as listas têm o mesmo tamanho
@@ -115,6 +120,12 @@ function adicionar() {
  * @requires Element#lista-amigos - Lista de participantes
  * @requires Element#lista-sorteio - Elemento para exibir o resultado
  * @throws {Error} Se houver menos de 3 participantes
+ * @returns {void}
+ * @tested true
+ * @example
+ * // Realiza o sorteio com 3 participantes
+ * // Resultado HTML: "João -&gt; Maria<br>Maria -&gt; Pedro<br>Pedro -&gt; João"
+ * sortear();
  */
 function sortear() {
     let nomes = obterListaDeNomes();
@@ -135,6 +146,11 @@ function sortear() {
  * Reinicia o sistema, limpando todas as listas
  * @requires Element#lista-amigos - Lista de participantes
  * @requires Element#lista-sorteio - Lista do sorteio
+ * @returns {void}
+ * @tested true
+ * @example
+ * // Limpa todas as listas
+ * reiniciar();
  */
 function reiniciar() {   
     document.getElementById('lista-amigos').textContent = '';
@@ -149,6 +165,8 @@ if (typeof module !== 'undefined' && module.exports) {
         verificarNomeDuplicado,
         embaralharArray,
         criarParesSorteio,
-        adicionar
+        adicionar,
+        sortear,
+        reiniciar
     };
 }
